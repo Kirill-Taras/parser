@@ -1,7 +1,8 @@
-import os
-import requests
 import json
+import os
 from pathlib import Path
+
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,6 +24,7 @@ HEADERS = {
     "Referer": "https://www.syrovarnya.com/",
     "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
 }
+
 
 def fetch_data(url: str) -> dict | None:
     """
@@ -102,19 +104,17 @@ def parse_menu(data: dict) -> list[dict]:
                 safe_name = f"{item['id']}.{ext}"
                 photo_path = download_image(photo_url, safe_name)
 
+            items.append(
+                {
+                    "title": title,
+                    "desc": desc,
+                    "weight": weight,
+                    "price": price,
+                    "photo": photo_path or photo_url,
+                }
+            )
 
-            items.append({
-                "title": title,
-                "desc": desc,
-                "weight": weight,
-                "price": price,
-                "photo": photo_path or photo_url
-            })
-
-        result.append({
-            "category": category_name,
-            "items": items
-        })
+        result.append({"category": category_name, "items": items})
 
     return result
 
@@ -132,7 +132,7 @@ if __name__ == "__main__":
                 print(f"     Описание: {item['desc']}")
                 print(f"     Граммовка: {item['weight']}")
                 print(f"     Цена: {item['price']} ₽")
-    # Сохраним меню в JSON для бота
+        # Сохраним меню в JSON для бота
         with open("menu.json", "w", encoding="utf-8") as f:
             json.dump(menu, f, ensure_ascii=False, indent=4)
 
